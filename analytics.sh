@@ -20,6 +20,7 @@ function create_app_container
       --link $DB_NAME:mongo \
       --name="$APP_NAME" \
       --restart="on-failure:5" \
+      --memory=128m \
       -e "VIRTUAL_HOST=$NODEJS_VHOST" \
       -e "LETSENCRYPT_HOST=$NODEJS_VHOST" \
       -e "LETSENCRYPT_EMAIL=$LETSENCRYPT_EMAIL" \
@@ -1175,12 +1176,6 @@ function menu_containers
 ################################################################################
 ############################    DEPLOY
 ################################################################################
-function auto_deploy
-{
-  deploy_images
-  create_containers
-  start_containers
-}
 
 function deploy
 {
@@ -1196,10 +1191,10 @@ function deploy
   response=""
   while ! echo "$response" | grep -i "[yn]" > /dev/null
   do
-
     read -p "Do you want to continue (y/n)? " response
     case $response in
-      "y"|"Y") auto_deploy;;
+      "y"|"Y") deploy_images && create_containers && start_containers;;
+      "n"|"N") echo -e "${WARNINGC}WARNING${NC}: Aborting...";;
     esac
   done
 }
@@ -1228,7 +1223,7 @@ function check_docker
   then
     echo -e "${ERRORC}ERROR${NC}: Unable to find docker path."
     echo "       Plese install docker first: https://www.docker.com/products/overview"
-    echo "Exiting..."
+    echo -e "${ERRORC}ERROR${NC}: Exiting..."
     exit 255
   else
     echo -e "${INFOC}INFO${NC}: docker found at $DOCKER"
@@ -1351,7 +1346,7 @@ if [ $# -eq 0 ]
 then
   init_script
   menu_main
-elif [ $# -eq 1 ]
+else
 then
   case $1 in
     "start") init_script; start_containers;;
@@ -1360,7 +1355,4 @@ then
     "list") init_script; check_containers;;
     *) usage; exit 1;;
   esac
-else
-  usage
-  exit 1
 fi
