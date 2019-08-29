@@ -41,7 +41,7 @@ router.get('/locations/global', function (req, res, next) {
 
         // if the "locations" parameter exists, and is not null, will filter the request based on the locations selected by the user
         // otherwise takes the "root" folder
-        locations = locationsFromQuery(req)
+        locations = locationsFromQuery(req);
         // Only take into account the type of locations defined by the user
         if (req.query.locationFilter) {
             switch (req.query.locationFilter) {
@@ -125,17 +125,19 @@ router.get('/locations/global', function (req, res, next) {
         );
 
 
-        function end() {
+        var end = function() {
             // check if all locations are done, and if the average is done
             if (locDone == locations.length && averageDone) {
-                if (errors.length > 0) res.status(500).json({ errors: errors });
+                if (errors.length > 0) res.status(500).json({
+                    errors: errors
+                });
                 // send back the response to the web browser
                 else res.json({
                     data: locResult,
                     average: dataAverage
-                })
+                });
             }
-        }
+        };
     }
 });
 
@@ -164,7 +166,7 @@ router.get('/locations/timeline', function (req, res, next) {
 
         // if the "locations" parameter exists, and is not null, will filter the request based on the locations selected by the user
         // otherwise takes the "root" folder
-        locations = locationsFromQuery(req)
+        locations = locationsFromQuery(req);
 
         locDone = 0;
 
@@ -197,7 +199,7 @@ router.get('/locations/timeline', function (req, res, next) {
                         if (timeserie.length == 0) {
                             data.times.forEach(function (entry) {
                                 timeserie.push(entry.time);
-                            })
+                            });
                         }
                         //timeserie = data.times["time"];
                         // add the array of values from this location to the final array
@@ -210,18 +212,23 @@ router.get('/locations/timeline', function (req, res, next) {
                     // call the "compare location timeline finished" event
                     end();
                 });
+
             function end() {
                 // if all the locations are done, send back the response to the web browser
                 if (locDone == locations.length) {
-                    if (errors.length > 0) res.status(500).json({ errors: errors });
+                    if (errors.length > 0) res.status(500).json({
+                        errors: errors
+                    });
                     else res.json({
                         timeserie: timeserie,
                         series: series
-                    })
+                    });
                 }
             }
         });
-    } else res.status(500).json({ error: "missing parameters" });
+    } else res.status(500).json({
+        error: "missing parameters"
+    });
 });
 
 /*================================================================
@@ -273,7 +280,9 @@ router.get("/periods/global", function (req, res, next) {
                 endDay.setDate(endDay.getDate() - i);
                 // add the new period at the beginning of the array
                 reqPeriods.unshift({
-                    "serie": 'Day -' + i, start: startDay, end: endDay,
+                    "serie": 'Day -' + i,
+                    start: startDay,
+                    end: endDay,
                     "uniqueClients": 0,
                     "engagedClients": 0,
                     "passersbyClients": 0,
@@ -281,14 +290,16 @@ router.get("/periods/global", function (req, res, next) {
                     "unassociatedClients": 0,
                     "newClients": 0,
                     "returningClients": 0
-                })
+                });
             }
         }
         // if the time range is less than one week
         // same as before, but range difference is 1 week
         else if (range <= oneWeek) {
             reqPeriods = [{
-                "serie": 'This Week', start: startTime, end: endTime,
+                "serie": 'This Week',
+                start: startTime,
+                end: endTime,
                 "uniqueClients": 0,
                 "engagedClients": 0,
                 "passersbyClients": 0,
@@ -303,7 +314,9 @@ router.get("/periods/global", function (req, res, next) {
                 var endWeek = new Date(endTime);
                 endWeek.setDate(endWeek.getDate() - i * 7);
                 reqPeriods.unshift({
-                    "serie": 'Week -' + i, start: startWeek, end: endWeek,
+                    "serie": 'Week -' + i,
+                    start: startWeek,
+                    end: endWeek,
                     "uniqueClients": 0,
                     "engagedClients": 0,
                     "passersbyClients": 0,
@@ -311,14 +324,16 @@ router.get("/periods/global", function (req, res, next) {
                     "unassociatedClients": 0,
                     "newClients": 0,
                     "returningClients": 0
-                })
+                });
             }
         }
         // if the time range is less than one month
         // same as before, but range difference is 1 month
         else if (range <= oneMonth) {
             reqPeriods = [{
-                "serie": 'This Month', start: startTime, end: endTime,
+                "serie": 'This Month',
+                start: startTime,
+                end: endTime,
                 "uniqueClients": 0,
                 "engagedClients": 0,
                 "passersbyClients": 0,
@@ -333,7 +348,9 @@ router.get("/periods/global", function (req, res, next) {
                 var endMonth = new Date(endTime);
                 endMonth.setMonth(endMonth.getMonth() - i);
                 reqPeriods.unshift({
-                    "serie": 'Month -' + i, start: startMonth, end: endMonth,
+                    "serie": 'Month -' + i,
+                    start: startMonth,
+                    end: endMonth,
                     "uniqueClients": 0,
                     "engagedClients": 0,
                     "passersbyClients": 0,
@@ -341,14 +358,16 @@ router.get("/periods/global", function (req, res, next) {
                     "unassociatedClients": 0,
                     "newClients": 0,
                     "returningClients": 0
-                })
+                });
             }
         }
         // otherwise
         // same as before, but range difference is 1 year
         else {
             reqPeriods = [{
-                "serie": 'This Year', start: startTime, end: endTime,
+                "serie": 'This Year',
+                start: startTime,
+                end: endTime,
                 "uniqueClients": 0,
                 "engagedClients": 0,
                 "passersbyClients": 0,
@@ -363,7 +382,9 @@ router.get("/periods/global", function (req, res, next) {
                 var endYear = new Date(endTime);
                 endYear.setFullYear(endYear.getFullYear() - i);
                 reqPeriods.unshift({
-                    "serie": 'Year -' + i, start: startYear, end: endYear,
+                    "serie": 'Year -' + i,
+                    start: startYear,
+                    end: endYear,
                     "uniqueClients": 0,
                     "engagedClients": 0,
                     "passersbyClients": 0,
@@ -371,7 +392,7 @@ router.get("/periods/global", function (req, res, next) {
                     "unassociatedClients": 0,
                     "newClients": 0,
                     "returningClients": 0
-                })
+                });
             }
         }
 
@@ -406,7 +427,9 @@ router.get("/periods/global", function (req, res, next) {
                             reqDone++;
                             // if all the locations and the periods are done
                             if (reqDone == reqTotal) {
-                                if (errors.length > 0) res.status(500).json({ errors: errors });
+                                if (errors.length > 0) res.status(500).json({
+                                    errors: errors
+                                });
                                 else {
                                     var dataAverage = {
                                         "uniqueClients": 0,
@@ -438,16 +461,19 @@ router.get("/periods/global", function (req, res, next) {
                                     res.json({
                                         average: dataAverage,
                                         data: reqPeriods
-                                    })
+                                    });
                                 }
                             }
                         }
-                    }.bind({ currentPeriod: currentPeriod }));
+                    }.bind({
+                        currentPeriod: currentPeriod
+                    }));
             });
         });
-    }
-    else
-        res.status(500).json({ error: "missing parameters" });
+    } else
+        res.status(500).json({
+            error: "missing parameters"
+        });
 });
 
 // route to get the "Over Time" charts
@@ -489,51 +515,89 @@ router.get('/periods/timeline', function (req, res, next) {
         // The number of entries and the values of each of them depends on the time range
         // if the time range is less than one day
         if (range <= oneDay) {
-            series = [{ name: 'Today', start: startTime, end: endTime, data: null }];
+            series = [{
+                name: 'Today',
+                start: startTime,
+                end: endTime,
+                data: null
+            }];
             for (i = 1; i <= 7; i++) {
                 var startDay = new Date(startTime);
                 startDay.setDate(startDay.getDate() - i);
                 var endDay = new Date(endTime);
                 endDay.setDate(endDay.getDate() - i);
-                series.unshift({ name: 'Day -' + i, start: startDay, end: endDay, data: null })
+                series.unshift({
+                    name: 'Day -' + i,
+                    start: startDay,
+                    end: endDay,
+                    data: null
+                });
             }
         }
         // define the array of periods to compare.
         // same as above, but range difference is 1 week
         else if (range <= oneWeek) {
-            series = [{ name: 'This Week', start: startTime, end: endTime, data: null }];
-            for (i = 1; i <= 5; i++) {
+            series = [{
+                name: 'This Week',
+                start: startTime,
+                end: endTime,
+                data: null
+            }];
+            for (i = 1; i <= 4; i++) {
                 var startWeek = new Date(startTime);
                 startWeek.setDate(startWeek.getDate() - i * 7);
                 var endWeek = new Date(endTime);
                 endWeek.setDate(endWeek.getDate() - i * 7);
                 series.unshift({
-                    name: 'Week -' + i, start: startWeek, end: endWeek, data: null
-                })
+                    name: 'Week -' + i,
+                    start: startWeek,
+                    end: endWeek,
+                    data: null
+                });
             }
         }
         // define the array of periods to compare.
         // but range difference is 1 month
         else if (range <= oneMonth) {
-            series = [{ name: 'This Month', start: startTime, end: endTime, data: null }];
-            for (i = 1; i <= 6; i++) {
+            series = [{
+                name: 'This Month',
+                start: startTime,
+                end: endTime,
+                data: null
+            }];
+            for (i = 1; i <= 2; i++) {
                 var startMonth = new Date(startTime);
                 startMonth.setMonth(startMonth.getMonth() - i);
                 var endMonth = new Date(endTime);
                 endMonth.setMonth(endMonth.getMonth() - i);
-                series.unshift({ name: 'Month -' + i, start: startMonth, end: endMonth, data: null })
+                series.unshift({
+                    name: 'Month -' + i,
+                    start: startMonth,
+                    end: endMonth,
+                    data: null
+                });
             }
         }
         // define the array of periods to compare.
         // same as above, but range difference is 1 year
         else {
-            series = [{ name: 'This Year', start: startTime, end: endTime, data: null }];
+            series = [{
+                name: 'This Year',
+                start: startTime,
+                end: endTime,
+                data: null
+            }];
             for (i = 1; i <= 2; i++) {
                 var startYear = new Date(startTime);
                 startYear.setFullYear(startYear.getFullYear() - i);
                 var endYear = new Date(endTime);
                 endYear.setFullYear(endYear.getFullYear() - i);
-                series.unshift({ name: 'Month -' + i, start: startYear, end: endYear, data: null })
+                series.unshift({
+                    name: 'Month -' + i,
+                    start: startYear,
+                    end: endYear,
+                    data: null
+                });
             }
         }
 
@@ -555,7 +619,7 @@ router.get('/periods/timeline', function (req, res, next) {
                     timeUnit,
                     function (err, data) {
                         // if there is an error, send the error message to the web browser
-                        if (err) errors.push(err);
+                        if (err) console.log(err); //errors.push(err);
                         else {
                             // if it is the first location done for this period of time, set the values
                             if (this.currentPeriod.data == null) this.currentPeriod.data = data.times;
@@ -574,7 +638,9 @@ router.get('/periods/timeline', function (req, res, next) {
                             reqDone++;
                             // if all the periods and all the locations are done
                             if (reqDone == reqTotal) {
-                                if (errors.length > 0) res.status(500).json({ errors: errors });
+                                if (errors.length > 0) res.status(500).json({
+                                    errors: errors
+                                });
                                 else {
                                     var storeFrontClients;
                                     series.forEach(function (currentPeriod) {
@@ -591,13 +657,17 @@ router.get('/periods/timeline', function (req, res, next) {
                                     res.json({
                                         timeserie: timeserie,
                                         series: series
-                                    })
+                                    });
                                 }
                             }
                         }
-                    }.bind({ currentPeriod: currentPeriod }));
+                    }.bind({
+                        currentPeriod: currentPeriod
+                    }));
             });
         });
-    } else res.json({ error: "missing parameters" });
+    } else res.json({
+        error: "missing parameters"
+    });
 });
 module.exports = router;
